@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maths Flashcards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .card-container {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+        
+        .flashcard {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .card-front {
+            background: white;
+        }
+        
+        .card-back {
+            background: #fff5f5;
+            transform: rotateY(180deg);
+        }
+        
+        .card-label {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #f5576c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .card-content {
+            font-size: 1.3em;
+            text-align: center;
+            line-height: 1.8;
+            color: #333;
+        }
+        
+        .card-back .card-content {
+            color: #555;
+        }
+        
+        .example {
+            background: #ffe5e5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            border-left: 4px solid #f5576c;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .btn-prev, .btn-next {
+            background: white;
+            color: #f5576c;
+        }
+        
+        .btn-prev:hover, .btn-next:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-shuffle {
+            background: #ffd700;
+            color: #333;
+        }
+        
+        .btn-shuffle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .progress {
+            color: white;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        .hint {
+            color: white;
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔢 Maths Flashcards</h1>
+        <p>Year 1 High School Mathematics</p>
+    </div>
+    
+    <div class="progress" id="progress">Card 1 of 8</div>
+    
+    <div class="card-container">
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+            <div class="card-face card-front">
+                <div class="card-label">Question</div>
+                <div class="card-content" id="question"></div>
+            </div>
+            <div class="card-face card-back">
+                <div class="card-label">Answer</div>
+                <div class="card-content" id="answer"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button class="btn-prev" onclick="prevCard()">← Previous</button>
+        <button class="btn-shuffle" onclick="shuffleCards()">🔀 Shuffle</button>
+        <button class="btn-next" onclick="nextCard()">Next →</button>
+    </div>
+    
+    <div class="hint">💡 Click the card to flip it</div>
+
+    <script>
+        const flashcards = [
+            // Rounding
+            {
+                question: "How do you round a number to the nearest whole number?",
+                answer: `Look at the digit after the decimal point:<br><br>
+                • If it's 5 or more, round UP<br>
+                • If it's 4 or less, round DOWN<br><br>
+                <div class="example">
+                <strong>Examples:</strong><br>
+                7.6 rounds to 8 (6 is ≥ 5)<br>
+                7.3 rounds to 7 (3 is < 5)<br>
+                12.5 rounds to 13 (5 rounds up)<br>
+                9.49 rounds to 9 (4 is < 5)
+                </div>`
+            },
+            {
+                question: "Round these numbers to the nearest whole number:<br><br>a) 15.8<br>b) 23.2<br>c) 8.5",
+                answer: `<strong>Answers:</strong><br><br>
+                a) 15.8 rounds to <strong>16</strong><br>
+                (8 is ≥ 5, so round up)<br><br>
+                b) 23.2 rounds to <strong>23</strong><br>
+                (2 is < 5, so round down)<br><br>
+                c) 8.5 rounds to <strong>9</strong><br>
+                (5 rounds up)`
+            },
+            // Improper Fractions to Mixed Numbers
+            {
+                question: "How do you convert an improper fraction to a mixed number in simplest form?",
+                answer: `<strong>Steps:</strong><br><br>
+                1. Divide the numerator by the denominator<br>
+                2. The quotient is the whole number<br>
+                3. The remainder is the new numerator<br>
+                4. Keep the same denominator<br>
+                5. Simplify if possible<br><br>
+                <div class="example">
+                <strong>Example:</strong> 11/4<br>
+                11 ÷ 4 = 2 remainder 3<br>
+                Answer: 2¾
+                </div>`
+            },
+            {
+                question: "Convert 17/5 to a mixed number in simplest form",
+                answer: `<strong>Solution:</strong><br><br>
+                17 ÷ 5 = 3 remainder 2<br><br>
+                Whole number: 3<br>
+                Remainder: 2<br>
+                Denominator: 5<br><br>
+                <strong>Answer: 3⅖</strong><br><br>
+                (Already in simplest form because 2 and 5 have no common factors)`
+            },
+            {
+                question: "Convert 22/6 to a mixed number in simplest form",
+                answer: `<strong>Solution:</strong><br><br>
+                22 ÷ 6 = 3 remainder 4<br><br>
+                This gives us 3⁴⁄₆<br><br>
+                Now simplify ⁴⁄₆:<br>
+                Both 4 and 6 divide by 2<br>
+                4 ÷ 2 = 2<br>
+                6 ÷ 2 = 3<br><br>
+                <strong>Answer: 3⅔</strong>`
+            },
+            // Ascending and Descending
+            {
+                question: "What does 'ascending order' mean?",
+                answer: `<strong>Ascending order</strong> means arranging numbers from <strong>smallest to largest</strong> (going up).<br><br>
+                <div class="example">
+                <strong>Examples:</strong><br>
+                2, 5, 8, 11, 15<br>
+                0.5, 1.2, 3.7, 4.9<br>
+                -10, -3, 0, 4, 12<br><br>
+                Think: "Ascending" like climbing UP a mountain ⛰️
+                </div>`
+            },
+            {
+                question: "What does 'descending order' mean?",
+                answer: `<strong>Descending order</strong> means arranging numbers from <strong>largest to smallest</strong> (going down).<br><br>
+                <div class="example">
+                <strong>Examples:</strong><br>
+                20, 15, 10, 5, 1<br>
+                9.8, 6.2, 3.1, 0.5<br>
+                100, 50, 25, 10, 5<br><br>
+                Think: "Descending" like going DOWN stairs 📉
+                </div>`
+            },
+            {
+                question: "Arrange these numbers in ascending order:<br><br>8.5, 3.2, 12.1, 5.9, 1.7",
+                answer: `<strong>Ascending order (smallest to largest):</strong><br><br>
+                1.7, 3.2, 5.9, 8.5, 12.1<br><br>
+                <div class="example">
+                <strong>Tip:</strong> Start by finding the smallest number, then the next smallest, and so on.
+                </div>`
+            }
+        ];
+
+        let currentCard = 0;
+        let isFlipped = false;
+
+        function displayCard() {
+            document.getElementById('question').innerHTML = flashcards[currentCard].question;
+            document.getElementById('answer').innerHTML = flashcards[currentCard].answer;
+            document.getElementById('progress').textContent = `Card ${currentCard + 1} of ${flashcards.length}`;
+            
+            if (isFlipped) {
+                document.getElementById('flashcard').classList.remove('flipped');
+                isFlipped = false;
+            }
+        }
+
+        function flipCard() {
+            document.getElementById('flashcard').classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+
+        function nextCard() {
+            currentCard = (currentCard + 1) % flashcards.length;
+            displayCard();
+        }
+
+        function prevCard() {
+            currentCard = (currentCard - 1 + flashcards.length) % flashcards.length;
+            displayCard();
+        }
+
+        function shuffleCards() {
+            for (let i = flashcards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+            }
+            currentCard = 0;
+            displayCard();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') nextCard();
+            if (event.key === 'ArrowLeft') prevCard();
+            if (event.key === ' ') {
+                event.preventDefault();
+                flipCard();
+            }
+        });
+
+        displayCard();
+    </script>
+</body>
+</html>
