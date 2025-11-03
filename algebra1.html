@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebra Basics Flashcards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: white;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .card-container {
+            perspective: 1000px;
+            margin: 30px 0;
+        }
+        
+        .card {
+            width: 100%;
+            height: 350px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .card-front {
+            background: white;
+        }
+        
+        .card-back {
+            background: #f0f0f0;
+            transform: rotateY(180deg);
+        }
+        
+        .card-front h2 {
+            color: #667eea;
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-front .term {
+            font-size: 48px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+        
+        .card-back .definition {
+            font-size: 22px;
+            line-height: 1.6;
+            color: #333;
+            text-align: center;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .btn-prev, .btn-next {
+            background: white;
+            color: #667eea;
+        }
+        
+        .btn-prev:hover, .btn-next:hover {
+            background: #f0f0f0;
+            transform: scale(1.05);
+        }
+        
+        .btn-shuffle {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .btn-shuffle:hover {
+            background: #ee5a52;
+            transform: scale(1.05);
+        }
+        
+        .progress {
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .hint {
+            color: white;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎓 Algebra Basics Flashcards</h1>
+    
+    <div class="container">
+        <div class="progress">
+            <span id="current">1</span> / <span id="total">12</span>
+        </div>
+        
+        <div class="card-container">
+            <div class="card" id="flashcard">
+                <div class="card-face card-front">
+                    <h2>Term</h2>
+                    <div class="term" id="term"></div>
+                </div>
+                <div class="card-face card-back">
+                    <div class="definition" id="definition"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="hint">Click the card to flip it!</div>
+        
+        <div class="controls">
+            <button class="btn-prev" onclick="prevCard()">← Previous</button>
+            <button class="btn-shuffle" onclick="shuffle()">🔀 Shuffle</button>
+            <button class="btn-next" onclick="nextCard()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+            {
+                term: "Variable",
+                definition: "A letter (like x or y) that represents an unknown number. It's like a box that can hold different values!"
+            },
+            {
+                term: "Expression",
+                definition: "A combination of numbers, variables, and operations (like 3x + 5). It's like a math phrase that doesn't have an equals sign."
+            },
+            {
+                term: "Equation",
+                definition: "A math sentence with an equals sign (like x + 3 = 7). Both sides must be equal!"
+            },
+            {
+                term: "Coefficient",
+                definition: "The number in front of a variable (in 5x, the 5 is the coefficient). It tells you how many of that variable you have."
+            },
+            {
+                term: "Constant",
+                definition: "A number that stays the same (like the 7 in x + 7). It doesn't change!"
+            },
+            {
+                term: "Term",
+                definition: "A single part of an expression separated by + or - signs. In 3x + 5 - 2y, there are three terms: 3x, 5, and 2y."
+            },
+            {
+                term: "Like Terms",
+                definition: "Terms that have the same variable part (like 3x and 5x, or 2y and 7y). You can combine these!"
+            },
+            {
+                term: "Solving",
+                definition: "Finding the value of the variable that makes the equation true. It's like being a math detective!"
+            },
+            {
+                term: "Inverse Operation",
+                definition: "The opposite operation that undoes another. Addition ↔ Subtraction, Multiplication ↔ Division."
+            },
+            {
+                term: "Simplify",
+                definition: "Making an expression easier by combining like terms and doing the math. Like cleaning up your room!"
+            },
+            {
+                term: "Evaluate",
+                definition: "Finding the value of an expression by substituting numbers for variables. If x = 3, then 2x + 1 = 7."
+            },
+            {
+                term: "Order of Operations",
+                definition: "The rules for which calculations to do first: Parentheses, Exponents, Multiplication/Division, Addition/Subtraction (PEMDAS)."
+            }
+        ];
+
+        let currentIndex = 0;
+        let cards = [...flashcards];
+        
+        function displayCard() {
+            const card = cards[currentIndex];
+            document.getElementById('term').textContent = card.term;
+            document.getElementById('definition').textContent = card.definition;
+            document.getElementById('current').textContent = currentIndex + 1;
+            document.getElementById('total').textContent = cards.length;
+            
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.remove('flipped');
+        }
+        
+        function nextCard() {
+            currentIndex = (currentIndex + 1) % cards.length;
+            displayCard();
+        }
+        
+        function prevCard() {
+            currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+            displayCard();
+        }
+        
+        function shuffle() {
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]];
+            }
+            currentIndex = 0;
+            displayCard();
+        }
+        
+        document.getElementById('flashcard').addEventListener('click', function() {
+            this.classList.toggle('flipped');
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ') {
+                e.preventDefault();
+                document.getElementById('flashcard').classList.toggle('flipped');
+            }
+        });
+        
+        displayCard();
+    </script>
+</body>
+</html>
