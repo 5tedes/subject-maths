@@ -1,295 +1,357 @@
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 1 Maths Flashcards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-const FlashcardApp = () => {
-  const styles = `
-    .flip-card {
-      perspective: 1000px;
-    }
-    .flip-card-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transition: transform 0.6s;
-      transform-style: preserve-3d;
-    }
-    .flip-card-inner.flipped {
-      transform: rotateY(180deg);
-    }
-    .flip-card-front, .flip-card-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-    }
-    .flip-card-back {
-      transform: rotateY(180deg);
-    }
-  `;
-  
-  const flashcards = [
-    // Triangles
-    {
-      category: "Triangles",
-      question: "What are the three types of triangles classified by sides?",
-      answer: "Equilateral (all sides equal), Isosceles (two sides equal), and Scalene (no sides equal)"
-    },
-    {
-      category: "Triangles",
-      question: "What is an equilateral triangle?",
-      answer: "A triangle with all three sides equal in length and all three angles equal to 60°"
-    },
-    {
-      category: "Triangles",
-      question: "What is an isosceles triangle?",
-      answer: "A triangle with two sides of equal length and two equal angles"
-    },
-    {
-      category: "Triangles",
-      question: "What is a scalene triangle?",
-      answer: "A triangle with all three sides of different lengths and all three angles different"
-    },
-    {
-      category: "Triangles",
-      question: "What are the three types of triangles classified by angles?",
-      answer: "Acute (all angles < 90°), Right (one angle = 90°), and Obtuse (one angle > 90°)"
-    },
-    {
-      category: "Triangles",
-      question: "What is the sum of all interior angles in ANY triangle?",
-      answer: "180 degrees"
-    },
-    {
-      category: "Triangles",
-      question: "What is a right-angled triangle?",
-      answer: "A triangle that has one angle exactly equal to 90 degrees"
-    },
-    {
-      category: "Triangles",
-      question: "What is an acute triangle?",
-      answer: "A triangle where all three angles are less than 90 degrees"
-    },
-    {
-      category: "Triangles",
-      question: "What is an obtuse triangle?",
-      answer: "A triangle that has one angle greater than 90 degrees"
-    },
-    {
-      category: "Triangles",
-      question: "In an isosceles triangle, if one angle is 40°, what could the other angles be?",
-      answer: "Either 40° and 100°, or 70° and 70° (depending on which angles are equal)"
-    },
-    
-    // Working with Angles
-    {
-      category: "Angles",
-      question: "What is an acute angle?",
-      answer: "An angle that measures less than 90 degrees"
-    },
-    {
-      category: "Angles",
-      question: "What is a right angle?",
-      answer: "An angle that measures exactly 90 degrees"
-    },
-    {
-      category: "Angles",
-      question: "What is an obtuse angle?",
-      answer: "An angle that measures more than 90 degrees but less than 180 degrees"
-    },
-    {
-      category: "Angles",
-      question: "What is a straight angle?",
-      answer: "An angle that measures exactly 180 degrees (forms a straight line)"
-    },
-    {
-      category: "Angles",
-      question: "What is a reflex angle?",
-      answer: "An angle that measures more than 180 degrees but less than 360 degrees"
-    },
-    {
-      category: "Angles",
-      question: "What are complementary angles?",
-      answer: "Two angles that add up to 90 degrees"
-    },
-    {
-      category: "Angles",
-      question: "What are supplementary angles?",
-      answer: "Two angles that add up to 180 degrees"
-    },
-    {
-      category: "Angles",
-      question: "What are vertically opposite angles?",
-      answer: "When two lines intersect, the angles opposite each other are equal"
-    },
-    {
-      category: "Angles",
-      question: "What are angles on a straight line?",
-      answer: "Angles that lie on a straight line and add up to 180 degrees"
-    },
-    {
-      category: "Angles",
-      question: "What are angles around a point?",
-      answer: "Angles that meet at a point and add up to 360 degrees"
-    },
-    {
-      category: "Angles",
-      question: "If two complementary angles are equal, what is the measure of each angle?",
-      answer: "45 degrees (since 45° + 45° = 90°)"
-    },
-    {
-      category: "Angles",
-      question: "If two supplementary angles are equal, what is the measure of each angle?",
-      answer: "90 degrees (since 90° + 90° = 180°)"
-    }
-  ];
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [filter, setFilter] = useState('All');
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-  const filteredCards = filter === 'All' 
-    ? flashcards 
-    : flashcards.filter(card => card.category === filter);
+        h1 {
+            font-size: 2.5rem;
+            color: #312e81;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
 
-  const handleNext = () => {
-    setIsFlipped(false);
-    setCurrentIndex((prev) => (prev + 1) % filteredCards.length);
-  };
+        .subtitle {
+            text-align: center;
+            color: #6366f1;
+            margin-bottom: 2rem;
+        }
 
-  const handlePrevious = () => {
-    setIsFlipped(false);
-    setCurrentIndex((prev) => (prev - 1 + filteredCards.length) % filteredCards.length);
-  };
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
 
-  const handleFlip = () => {
-    setIsFlipped(!isFlipped);
-  };
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
 
-  const handleReset = () => {
-    setCurrentIndex(0);
-    setIsFlipped(false);
-  };
+        .filter-btn.active {
+            background-color: #4f46e5;
+            color: white;
+        }
 
-  const currentCard = filteredCards[currentIndex];
+        .filter-btn:not(.active) {
+            background-color: white;
+            color: #4f46e5;
+        }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <style>{styles}</style>
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-indigo-900 mb-2">
-          Year 1 Maths Flashcards
-        </h1>
-        <p className="text-center text-indigo-600 mb-8">Triangles & Angles</p>
+        .filter-btn:not(.active):hover {
+            background-color: #eef2ff;
+        }
 
-        {/* Filter Buttons */}
-        <div className="flex justify-center gap-4 mb-6">
-          <button
-            onClick={() => { setFilter('All'); setCurrentIndex(0); setIsFlipped(false); }}
-            className={`px-6 py-2 rounded-full font-semibold transition ${
-              filter === 'All'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white text-indigo-600 hover:bg-indigo-50'
-            }`}
-          >
-            All ({flashcards.length})
-          </button>
-          <button
-            onClick={() => { setFilter('Triangles'); setCurrentIndex(0); setIsFlipped(false); }}
-            className={`px-6 py-2 rounded-full font-semibold transition ${
-              filter === 'Triangles'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white text-indigo-600 hover:bg-indigo-50'
-            }`}
-          >
-            Triangles ({flashcards.filter(c => c.category === 'Triangles').length})
-          </button>
-          <button
-            onClick={() => { setFilter('Angles'); setCurrentIndex(0); setIsFlipped(false); }}
-            className={`px-6 py-2 rounded-full font-semibold transition ${
-              filter === 'Angles'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-white text-indigo-600 hover:bg-indigo-50'
-            }`}
-          >
-            Angles ({flashcards.filter(c => c.category === 'Angles').length})
-          </button>
+        .flip-card {
+            perspective: 1000px;
+            height: 320px;
+            margin-bottom: 2rem;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .flip-card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .flip-card-front {
+            background-color: white;
+        }
+
+        .flip-card-back {
+            background-color: #4f46e5;
+            transform: rotateY(180deg);
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .flip-card-front .category-badge {
+            background-color: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .flip-card-back .category-badge {
+            background-color: #6366f1;
+            color: white;
+        }
+
+        .question {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-top: 1rem;
+        }
+
+        .answer {
+            font-size: 1.25rem;
+            color: white;
+            margin-top: 1rem;
+            line-height: 1.75;
+        }
+
+        .hint {
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .flip-card-front .hint {
+            color: #6b7280;
+        }
+
+        .flip-card-back .hint {
+            color: #c7d2fe;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .control-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: white;
+            border: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background-color: #f9fafb;
+        }
+
+        .control-btn svg {
+            width: 24px;
+            height: 24px;
+            stroke: #4f46e5;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .counter {
+            background-color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            color: #312e81;
+        }
+
+        .tip {
+            text-align: center;
+            color: #6366f1;
+            font-size: 0.875rem;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Year 1 Maths Flashcards</h1>
+        <p class="subtitle">Triangles & Angles</p>
+
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterCards('All')">All (<span id="count-all">22</span>)</button>
+            <button class="filter-btn" onclick="filterCards('Triangles')">Triangles (<span id="count-triangles">10</span>)</button>
+            <button class="filter-btn" onclick="filterCards('Angles')">Angles (<span id="count-angles">12</span>)</button>
         </div>
 
-        {/* Flashcard */}
-        <div className="flip-card mb-6" style={{ height: '320px' }}>
-          <div
-            onClick={handleFlip}
-            className={`flip-card-inner cursor-pointer ${isFlipped ? 'flipped' : ''}`}
-          >
-            {/* Front */}
-            <div className="flip-card-front bg-white rounded-2xl shadow-2xl p-8 flex flex-col justify-between">
-              <div>
-                <span className="inline-block px-4 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold mb-4">
-                  {currentCard.category}
-                </span>
-                <h2 className="text-2xl font-bold text-gray-800 mt-4">
-                  {currentCard.question}
-                </h2>
-              </div>
-              <p className="text-center text-gray-500 text-sm">Click to reveal answer</p>
+        <div class="flip-card">
+            <div class="flip-card-inner" id="flashcard" onclick="flipCard()">
+                <div class="flip-card-front">
+                    <div>
+                        <span class="category-badge" id="category-front"></span>
+                        <div class="question" id="question"></div>
+                    </div>
+                    <p class="hint">Click to reveal answer</p>
+                </div>
+                <div class="flip-card-back">
+                    <div>
+                        <span class="category-badge">Answer</span>
+                        <div class="answer" id="answer"></div>
+                    </div>
+                    <p class="hint">Click to see question</p>
+                </div>
             </div>
+        </div>
 
-            {/* Back */}
-            <div className="flip-card-back bg-indigo-600 rounded-2xl shadow-2xl p-8 flex flex-col justify-between">
-              <div>
-                <span className="inline-block px-4 py-1 bg-indigo-500 text-white rounded-full text-sm font-semibold mb-4">
-                  Answer
-                </span>
-                <p className="text-xl text-white mt-4 leading-relaxed">
-                  {currentCard.answer}
-                </p>
-              </div>
-              <p className="text-center text-indigo-200 text-sm">Click to see question</p>
+        <div class="controls">
+            <button class="control-btn" onclick="previousCard()">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            
+            <div class="counter">
+                <span id="current">1</span> / <span id="total">22</span>
             </div>
-          </div>
+            
+            <button class="control-btn" onclick="nextCard()">
+                <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+            
+            <button class="control-btn" onclick="resetCards()">
+                <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+            </button>
         </div>
 
-        {/* Controls */}
-        <div className="flex justify-center items-center gap-4">
-          <button
-            onClick={handlePrevious}
-            className="p-3 bg-white rounded-full shadow-lg hover:bg-gray-50 transition"
-            aria-label="Previous card"
-          >
-            <ChevronLeft className="w-6 h-6 text-indigo-600" />
-          </button>
-
-          <div className="bg-white px-6 py-3 rounded-full shadow-lg">
-            <span className="text-indigo-900 font-semibold">
-              {currentIndex + 1} / {filteredCards.length}
-            </span>
-          </div>
-
-          <button
-            onClick={handleNext}
-            className="p-3 bg-white rounded-full shadow-lg hover:bg-gray-50 transition"
-            aria-label="Next card"
-          >
-            <ChevronRight className="w-6 h-6 text-indigo-600" />
-          </button>
-
-          <button
-            onClick={handleReset}
-            className="p-3 bg-white rounded-full shadow-lg hover:bg-gray-50 transition"
-            aria-label="Reset to first card"
-          >
-            <RotateCcw className="w-6 h-6 text-indigo-600" />
-          </button>
-        </div>
-
-        {/* Keyboard hints */}
-        <p className="text-center text-indigo-600 text-sm mt-6">
-          Tip: Click the card to flip it, or use the navigation buttons
-        </p>
-      </div>
+        <p class="tip">Tip: Click the card to flip it, or use the navigation buttons</p>
     </div>
-  );
-};
 
-export default FlashcardApp;
+    <script>
+        const flashcards = [
+            // Triangles
+            { category: "Triangles", question: "What are the three types of triangles classified by sides?", answer: "Equilateral (all sides equal), Isosceles (two sides equal), and Scalene (no sides equal)" },
+            { category: "Triangles", question: "What is an equilateral triangle?", answer: "A triangle with all three sides equal in length and all three angles equal to 60°" },
+            { category: "Triangles", question: "What is an isosceles triangle?", answer: "A triangle with two sides of equal length and two equal angles" },
+            { category: "Triangles", question: "What is a scalene triangle?", answer: "A triangle with all three sides of different lengths and all three angles different" },
+            { category: "Triangles", question: "What are the three types of triangles classified by angles?", answer: "Acute (all angles < 90°), Right (one angle = 90°), and Obtuse (one angle > 90°)" },
+            { category: "Triangles", question: "What is the sum of all interior angles in ANY triangle?", answer: "180 degrees" },
+            { category: "Triangles", question: "What is a right-angled triangle?", answer: "A triangle that has one angle exactly equal to 90 degrees" },
+            { category: "Triangles", question: "What is an acute triangle?", answer: "A triangle where all three angles are less than 90 degrees" },
+            { category: "Triangles", question: "What is an obtuse triangle?", answer: "A triangle that has one angle greater than 90 degrees" },
+            { category: "Triangles", question: "In an isosceles triangle, if one angle is 40°, what could the other angles be?", answer: "Either 40° and 100°, or 70° and 70° (depending on which angles are equal)" },
+            
+            // Angles
+            { category: "Angles", question: "What is an acute angle?", answer: "An angle that measures less than 90 degrees" },
+            { category: "Angles", question: "What is a right angle?", answer: "An angle that measures exactly 90 degrees" },
+            { category: "Angles", question: "What is an obtuse angle?", answer: "An angle that measures more than 90 degrees but less than 180 degrees" },
+            { category: "Angles", question: "What is a straight angle?", answer: "An angle that measures exactly 180 degrees (forms a straight line)" },
+            { category: "Angles", question: "What is a reflex angle?", answer: "An angle that measures more than 180 degrees but less than 360 degrees" },
+            { category: "Angles", question: "What are complementary angles?", answer: "Two angles that add up to 90 degrees" },
+            { category: "Angles", question: "What are supplementary angles?", answer: "Two angles that add up to 180 degrees" },
+            { category: "Angles", question: "What are vertically opposite angles?", answer: "When two lines intersect, the angles opposite each other are equal" },
+            { category: "Angles", question: "What are angles on a straight line?", answer: "Angles that lie on a straight line and add up to 180 degrees" },
+            { category: "Angles", question: "What are angles around a point?", answer: "Angles that meet at a point and add up to 360 degrees" },
+            { category: "Angles", question: "If two complementary angles are equal, what is the measure of each angle?", answer: "45 degrees (since 45° + 45° = 90°)" },
+            { category: "Angles", question: "If two supplementary angles are equal, what is the measure of each angle?", answer: "90 degrees (since 90° + 90° = 180°)" }
+        ];
+
+        let currentIndex = 0;
+        let isFlipped = false;
+        let currentFilter = 'All';
+        let filteredCards = [...flashcards];
+
+        function updateCard() {
+            const card = filteredCards[currentIndex];
+            document.getElementById('question').textContent = card.question;
+            document.getElementById('answer').textContent = card.answer;
+            document.getElementById('category-front').textContent = card.category;
+            document.getElementById('current').textContent = currentIndex + 1;
+            document.getElementById('total').textContent = filteredCards.length;
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            if (isFlipped) {
+                flipCard();
+            }
+            currentIndex = (currentIndex + 1) % filteredCards.length;
+            updateCard();
+        }
+
+        function previousCard() {
+            if (isFlipped) {
+                flipCard();
+            }
+            currentIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length;
+            updateCard();
+        }
+
+        function resetCards() {
+            if (isFlipped) {
+                flipCard();
+            }
+            currentIndex = 0;
+            updateCard();
+        }
+
+        function filterCards(filter) {
+            if (isFlipped) {
+                flipCard();
+            }
+            
+            currentFilter = filter;
+            currentIndex = 0;
+            
+            if (filter === 'All') {
+                filteredCards = [...flashcards];
+            } else {
+                filteredCards = flashcards.filter(card => card.category === filter);
+            }
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            updateCard();
+        }
+
+        // Initialize
+        updateCard();
+    </script>
+</body>
+</html>
