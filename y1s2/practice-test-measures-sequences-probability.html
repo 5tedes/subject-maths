@@ -97,7 +97,7 @@
 
         .question-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 0.75rem;
         }
 
@@ -337,39 +337,51 @@
             transition: width 0.5s ease;
         }
 
-        .table-question {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 0.75rem;
+        /* Coordinate Grid Styles */
+        .coord-grid-container {
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
         }
 
-        .table-question th, .table-question td {
+        .coord-grid {
+            background: white;
             border: 2px solid #c7d2fe;
-            padding: 0.5rem;
-            text-align: center;
+            border-radius: 0.5rem;
+            padding: 10px;
         }
 
-        .table-question th {
-            background: #e0e7ff;
-            color: #3730a3;
+        .coord-grid svg {
+            display: block;
         }
 
-        .table-question input {
-            width: 80px;
-            padding: 0.25rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.25rem;
-            text-align: center;
+        .grid-line {
+            stroke: #e5e7eb;
+            stroke-width: 1;
         }
 
-        .sequence-display {
-            font-family: monospace;
-            font-size: 1.1rem;
-            background: #f0f9ff;
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            margin: 0.5rem 0;
-            display: inline-block;
+        .axis-line {
+            stroke: #1f2937;
+            stroke-width: 2;
+        }
+
+        .axis-label {
+            font-size: 12px;
+            fill: #6b7280;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .point {
+            fill: #4f46e5;
+            stroke: white;
+            stroke-width: 2;
+        }
+
+        .point-label {
+            font-size: 14px;
+            font-weight: bold;
+            fill: #1f2937;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
         @media (max-width: 640px) {
@@ -383,6 +395,10 @@
 
             .score-breakdown {
                 gap: 1rem;
+            }
+
+            .coord-grid-container {
+                overflow-x: auto;
             }
         }
     </style>
@@ -452,6 +468,57 @@
     </div>
 
     <script>
+        // SVG coordinate grid generator
+        function createCoordGrid(points, gridSize = 6, cellSize = 35) {
+            const width = (gridSize * 2 + 1) * cellSize;
+            const height = (gridSize * 2 + 1) * cellSize;
+            const centerX = (gridSize + 0.5) * cellSize;
+            const centerY = (gridSize + 0.5) * cellSize;
+
+            let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
+
+            // Grid lines
+            for (let i = -gridSize; i <= gridSize; i++) {
+                const x = centerX + i * cellSize;
+                const y = centerY - i * cellSize;
+                // Vertical lines
+                svg += `<line x1="${x}" y1="0" x2="${x}" y2="${height}" class="grid-line"/>`;
+                // Horizontal lines
+                svg += `<line x1="0" y1="${y}" x2="${width}" y2="${y}" class="grid-line"/>`;
+            }
+
+            // Axes
+            svg += `<line x1="${centerX}" y1="0" x2="${centerX}" y2="${height}" class="axis-line"/>`;
+            svg += `<line x1="0" y1="${centerY}" x2="${width}" y2="${centerY}" class="axis-line"/>`;
+
+            // Axis labels
+            for (let i = -gridSize; i <= gridSize; i++) {
+                if (i !== 0) {
+                    // X-axis labels
+                    const labelX = centerX + i * cellSize;
+                    svg += `<text x="${labelX}" y="${centerY + 18}" class="axis-label" text-anchor="middle">${i}</text>`;
+                    // Y-axis labels
+                    const labelY = centerY - i * cellSize;
+                    svg += `<text x="${centerX - 12}" y="${labelY + 4}" class="axis-label" text-anchor="end">${i}</text>`;
+                }
+            }
+
+            // Axis arrows and labels
+            svg += `<text x="${width - 15}" y="${centerY - 8}" class="axis-label" font-weight="bold">x</text>`;
+            svg += `<text x="${centerX + 10}" y="15" class="axis-label" font-weight="bold">y</text>`;
+
+            // Points
+            points.forEach(point => {
+                const px = centerX + point.x * cellSize;
+                const py = centerY - point.y * cellSize;
+                svg += `<circle cx="${px}" cy="${py}" r="8" class="point"/>`;
+                svg += `<text x="${px + 12}" y="${py - 10}" class="point-label">${point.label}</text>`;
+            });
+
+            svg += '</svg>';
+            return svg;
+        }
+
         // Question data organized by section
         const questions = {
             measures: [
@@ -465,15 +532,17 @@
                 { id: 'm8', question: '4500 ml = _____ L', answer: '4.5', unit: 'L', type: 'input' },
                 { id: 'm9', question: '0.08 km = _____ m', answer: '80', unit: 'm', type: 'input' },
                 { id: 'm10', question: '560 cm = _____ m', answer: '5.6', unit: 'm', type: 'input' },
+                { id: 'm11', question: '1250 mg = _____ g', answer: '1.25', unit: 'g', type: 'input' },
+                { id: 'm12', question: '0.45 km = _____ cm', answer: '45000', unit: 'cm', type: 'input' },
                 {
-                    id: 'm11',
+                    id: 'm13',
                     question: 'Which is the longest length?',
                     options: ['2500 mm', '3 m', '250 cm', '0.025 km'],
                     answer: '3 m',
                     type: 'mc'
                 },
                 {
-                    id: 'm12',
+                    id: 'm14',
                     question: 'Order these from shortest to longest: 4200 mm, 5 m, 380 cm, 0.045 km',
                     options: [
                         '380 cm, 4200 mm, 0.045 km, 5 m',
@@ -555,6 +624,13 @@
                     answer: '4',
                     unit: 'm',
                     type: 'input'
+                },
+                {
+                    id: 'a11',
+                    question: 'A square garden has an area of 64 m². A path 1 m wide is built around it. What is the area of the path?',
+                    answer: '36',
+                    unit: 'm²',
+                    type: 'input'
                 }
             ],
             sequences: [
@@ -632,74 +708,125 @@
                     question: 'Using the sequence 8, 15, 22, 29, 36, ... what is the 50th term?',
                     answer: '351',
                     type: 'input'
+                },
+                {
+                    id: 's13',
+                    question: 'A sequence has first term 5 and common difference 3. What is the general term?',
+                    options: ['3n + 5', '5n + 3', '3n + 2', '5n - 2'],
+                    answer: '3n + 2',
+                    type: 'mc'
+                },
+                {
+                    id: 's14',
+                    question: 'What are the first 3 terms of the sequence with general term 2n² - 1?',
+                    options: ['1, 7, 17', '1, 3, 5', '0, 3, 8', '2, 8, 18'],
+                    answer: '1, 7, 17',
+                    type: 'mc'
                 }
             ],
             coordinates: [
                 {
                     id: 'c1',
+                    question: 'Look at the coordinate grid below. What are the coordinates of point A?',
+                    hasGrid: true,
+                    gridPoints: [
+                        { x: 4, y: 2, label: 'A' },
+                        { x: -3, y: 4, label: 'B' },
+                        { x: -5, y: -1, label: 'C' },
+                        { x: 3, y: -3, label: 'D' },
+                        { x: 0, y: -5, label: 'E' },
+                        { x: 2, y: 0, label: 'F' }
+                    ],
+                    options: ['(4, 2)', '(2, 4)', '(-4, 2)', '(4, -2)'],
+                    answer: '(4, 2)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c2',
+                    question: 'Using the grid above, what are the coordinates of point B?',
+                    options: ['(-3, 4)', '(4, -3)', '(-4, 3)', '(3, 4)'],
+                    answer: '(-3, 4)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c3',
+                    question: 'Using the grid above, what are the coordinates of point C?',
+                    options: ['(-5, -1)', '(-1, -5)', '(5, -1)', '(-5, 1)'],
+                    answer: '(-5, -1)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c4',
+                    question: 'Using the grid above, what are the coordinates of point D?',
+                    options: ['(3, -3)', '(-3, 3)', '(-3, -3)', '(3, 3)'],
+                    answer: '(3, -3)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c5',
+                    question: 'Using the grid above, what are the coordinates of point E?',
+                    options: ['(0, -5)', '(-5, 0)', '(0, 5)', '(5, 0)'],
+                    answer: '(0, -5)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c6',
+                    question: 'Using the grid above, what are the coordinates of point F?',
+                    options: ['(2, 0)', '(0, 2)', '(-2, 0)', '(0, -2)'],
+                    answer: '(2, 0)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c7',
                     question: 'What is the midpoint of (2, 4) and (6, 8)?',
                     options: ['(4, 6)', '(8, 12)', '(3, 4)', '(4, 12)'],
                     answer: '(4, 6)',
                     type: 'mc'
                 },
                 {
-                    id: 'c2',
+                    id: 'c8',
                     question: 'What is the midpoint of (-4, 2) and (2, -6)?',
                     options: ['(-1, -2)', '(-2, -4)', '(-1, 4)', '(3, 4)'],
                     answer: '(-1, -2)',
                     type: 'mc'
                 },
                 {
-                    id: 'c3',
+                    id: 'c9',
                     question: 'What is the midpoint of (0, 5) and (8, 5)?',
                     options: ['(4, 5)', '(4, 0)', '(8, 10)', '(0, 5)'],
                     answer: '(4, 5)',
                     type: 'mc'
                 },
                 {
-                    id: 'c4',
+                    id: 'c10',
                     question: 'The midpoint of points A and B is (3, 4). If A is (1, 2), what is point B?',
                     options: ['(5, 6)', '(2, 3)', '(4, 6)', '(2, 6)'],
                     answer: '(5, 6)',
                     type: 'mc'
                 },
                 {
-                    id: 'c5',
+                    id: 'c11',
                     question: 'In which quadrant is the point (-3, 5)?',
                     options: ['1st quadrant', '2nd quadrant', '3rd quadrant', '4th quadrant'],
                     answer: '2nd quadrant',
                     type: 'mc'
                 },
                 {
-                    id: 'c6',
+                    id: 'c12',
                     question: 'In which quadrant is the point (4, -2)?',
                     options: ['1st quadrant', '2nd quadrant', '3rd quadrant', '4th quadrant'],
                     answer: '4th quadrant',
                     type: 'mc'
                 },
                 {
-                    id: 'c7',
-                    question: 'A point lies on the x-axis at x = -5. What are its coordinates?',
-                    options: ['(-5, 0)', '(0, -5)', '(-5, -5)', '(5, 0)'],
-                    answer: '(-5, 0)',
-                    type: 'mc'
-                },
-                {
-                    id: 'c8',
-                    question: 'A point lies on the y-axis at y = 3. What are its coordinates?',
-                    options: ['(3, 0)', '(0, 3)', '(3, 3)', '(-3, 0)'],
-                    answer: '(0, 3)',
-                    type: 'mc'
-                },
-                {
-                    id: 'c9',
+                    id: 'c13',
                     question: 'What is the midpoint of (-6, -2) and (-2, -8)?',
                     options: ['(-4, -5)', '(-8, -10)', '(-4, 5)', '(4, 5)'],
                     answer: '(-4, -5)',
                     type: 'mc'
                 },
                 {
-                    id: 'c10',
+                    id: 'c14',
                     question: 'A rectangle has corners at (1, 1), (1, 5), (7, 5), and (7, 1). What is the coordinate of the center of the rectangle?',
                     options: ['(4, 3)', '(3, 4)', '(4, 4)', '(3, 3)'],
                     answer: '(4, 3)',
@@ -790,12 +917,27 @@
                     options: ['0.65', '0.35', '1.65', '0'],
                     answer: '0.35',
                     type: 'mc'
+                },
+                {
+                    id: 'p13',
+                    question: 'A fair dice is rolled. What is P(rolling a number less than 7)?',
+                    options: ['0', '1/6', '6/7', '1'],
+                    answer: '1',
+                    type: 'mc'
+                },
+                {
+                    id: 'p14',
+                    question: 'In a class of 30 students, 18 play football. A student is picked at random. What is P(they play football)?',
+                    options: ['18/30', '12/30', '18/12', '30/18'],
+                    answer: '18/30',
+                    type: 'mc'
                 }
             ]
         };
 
         let userAnswers = {};
         let submitted = false;
+        let gridRendered = false;
 
         function renderQuestions() {
             // Render each section
@@ -816,6 +958,15 @@
                 html += `<div class="question-number">${index + 1}</div>`;
                 html += `<div class="question-text">${q.question}</div>`;
                 html += `</div>`;
+
+                // Add coordinate grid if this question has one
+                if (q.hasGrid && q.gridPoints) {
+                    html += `<div class="coord-grid-container">`;
+                    html += `<div class="coord-grid">`;
+                    html += createCoordGrid(q.gridPoints);
+                    html += `</div>`;
+                    html += `</div>`;
+                }
 
                 if (q.type === 'input') {
                     html += `<div class="input-answer">`;
