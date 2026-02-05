@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 1 Maths Flashcards - Measures, Sequences & Probability</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: white;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .filter-btn:not(.active) {
+            background: rgba(255,255,255,0.1);
+            color: #cbd5e1;
+        }
+
+        .filter-btn:not(.active):hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .progress-info {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        .flashcard {
+            width: 100%;
+            min-height: 350px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            min-height: 350px;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border: 2px solid #475569;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transform: rotateY(180deg);
+        }
+
+        .card-category {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.5rem;
+            align-self: flex-start;
+        }
+
+        .card-front .card-category {
+            background: rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
+        }
+
+        .card-back .card-category {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card-front .card-content {
+            color: white;
+        }
+
+        .card-back .card-content {
+            color: white;
+        }
+
+        .card-question {
+            font-size: 1.4rem;
+            font-weight: 600;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .card-answer {
+            font-size: 1.15rem;
+            line-height: 1.7;
+        }
+
+        .card-answer h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            color: #c7d2fe;
+        }
+
+        .card-answer ul {
+            margin-left: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-answer li {
+            margin-bottom: 0.4rem;
+        }
+
+        .card-answer .formula {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            margin: 0.75rem 0;
+            text-align: center;
+        }
+
+        .card-answer .example {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid #c7d2fe;
+            margin: 0.75rem 0;
+            font-size: 1rem;
+        }
+
+        .card-answer .warning {
+            background: rgba(251, 191, 36, 0.2);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid #fbbf24;
+            margin: 0.75rem 0;
+            font-size: 0.95rem;
+        }
+
+        .card-answer .tip {
+            background: rgba(34, 197, 94, 0.2);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid #22c55e;
+            margin: 0.75rem 0;
+            font-size: 0.95rem;
+        }
+
+        .card-hint {
+            text-align: center;
+            margin-top: auto;
+            padding-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-nav {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-shuffle {
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .btn-shuffle:hover {
+            transform: scale(1.05);
+        }
+
+        .counter {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .keyboard-hint {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-top: 1.5rem;
+        }
+
+        .keyboard-hint kbd {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+        }
+
+        @media (max-width: 640px) {
+            .card-question {
+                font-size: 1.2rem;
+            }
+
+            .card-answer {
+                font-size: 1rem;
+            }
+
+            .controls {
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Maths Flashcards</h1>
+        <p class="subtitle">Measures, Sequences & Probability</p>
+
+        <div class="filter-container">
+            <button class="filter-btn active" onclick="filterCards('all')">All</button>
+            <button class="filter-btn" onclick="filterCards('measures')">Measures</button>
+            <button class="filter-btn" onclick="filterCards('perimeter')">Perimeter</button>
+            <button class="filter-btn" onclick="filterCards('area')">Area</button>
+            <button class="filter-btn" onclick="filterCards('sequences')">Sequences</button>
+            <button class="filter-btn" onclick="filterCards('coordinates')">Coordinates</button>
+            <button class="filter-btn" onclick="filterCards('probability')">Probability</button>
+        </div>
+
+        <p class="progress-info">Card <span id="current">1</span> of <span id="total">0</span></p>
+
+        <div class="card-container">
+            <div class="flashcard" id="flashcard" onclick="flipCard()">
+                <div class="card-face card-front">
+                    <span class="card-category" id="category-front"></span>
+                    <div class="card-content">
+                        <div class="card-question" id="question"></div>
+                    </div>
+                    <p class="card-hint">Click to reveal answer</p>
+                </div>
+                <div class="card-face card-back">
+                    <span class="card-category">Answer</span>
+                    <div class="card-content">
+                        <div class="card-answer" id="answer"></div>
+                    </div>
+                    <p class="card-hint">Click to see question</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-nav" onclick="prevCard()">← Previous</button>
+            <div class="counter"><span id="counter-current">1</span> / <span id="counter-total">0</span></div>
+            <button class="btn btn-nav" onclick="nextCard()">Next →</button>
+            <button class="btn btn-shuffle" onclick="shuffleCards()">🔀 Shuffle</button>
+        </div>
+
+        <p class="keyboard-hint">
+            Use <kbd>←</kbd> <kbd>→</kbd> to navigate, <kbd>Space</kbd> to flip
+        </p>
+    </div>
+
+    <script>
+        const allFlashcards = [
+            // METRIC MEASURES
+            {
+                category: 'measures',
+                question: 'What are the metric length conversions?',
+                answer: `
+                    <h3>Length Conversions</h3>
+                    <div class="formula">
+                        1 km = 1000 m<br>
+                        1 m = 100 cm<br>
+                        1 cm = 10 mm<br>
+                        1 m = 1000 mm
+                    </div>
+                    <div class="tip"><strong>Tip:</strong> "King Henry Died Monday Drinking Chocolate Milk" - km, hm, dam, m, dm, cm, mm</div>
+                `
+            },
+            {
+                category: 'measures',
+                question: 'What are the metric mass conversions?',
+                answer: `
+                    <h3>Mass Conversions</h3>
+                    <div class="formula">
+                        1 kg = 1000 g<br>
+                        1 g = 1000 mg<br>
+                        1 tonne = 1000 kg
+                    </div>
+                    <div class="example"><strong>Example:</strong> 2.5 kg = 2.5 × 1000 = 2500 g</div>
+                `
+            },
+            {
+                category: 'measures',
+                question: 'What are the metric capacity conversions?',
+                answer: `
+                    <h3>Capacity Conversions</h3>
+                    <div class="formula">
+                        1 L = 1000 ml<br>
+                        1 ml = 1 cm³
+                    </div>
+                    <div class="example"><strong>Example:</strong> 0.75 L = 0.75 × 1000 = 750 ml</div>
+                `
+            },
+            {
+                category: 'measures',
+                question: 'How do you convert from larger to smaller units?',
+                answer: `
+                    <h3>Larger → Smaller: MULTIPLY</h3>
+                    <div class="formula">Multiply by the conversion factor</div>
+                    <div class="example">
+                        <strong>Examples:</strong><br>
+                        • 3 km → m: 3 × 1000 = 3000 m<br>
+                        • 2.5 m → cm: 2.5 × 100 = 250 cm<br>
+                        • 4 kg → g: 4 × 1000 = 4000 g
+                    </div>
+                    <div class="tip"><strong>Remember:</strong> More smaller units needed!</div>
+                `
+            },
+            {
+                category: 'measures',
+                question: 'How do you convert from smaller to larger units?',
+                answer: `
+                    <h3>Smaller → Larger: DIVIDE</h3>
+                    <div class="formula">Divide by the conversion factor</div>
+                    <div class="example">
+                        <strong>Examples:</strong><br>
+                        • 5000 m → km: 5000 ÷ 1000 = 5 km<br>
+                        • 350 cm → m: 350 ÷ 100 = 3.5 m<br>
+                        • 2500 g → kg: 2500 ÷ 1000 = 2.5 kg
+                    </div>
+                    <div class="tip"><strong>Remember:</strong> Fewer larger units needed!</div>
+                `
+            },
+            {
+                category: 'measures',
+                question: 'Common mistake: Converting between mm, cm, and m',
+                answer: `
+                    <h3>Watch Out!</h3>
+                    <div class="warning">
+                        <strong>Common Error:</strong> Thinking 1 m = 10 cm<br>
+                        <strong>Correct:</strong> 1 m = 100 cm
+                    </div>
+                    <div class="formula">
+                        mm → cm: ÷ 10<br>
+                        cm → m: ÷ 100<br>
+                        mm → m: ÷ 1000
+                    </div>
+                    <div class="example">
+                        450 mm = 45 cm = 0.45 m
+                    </div>
+                `
+            },
+
+            // PERIMETER
+            {
+                category: 'perimeter',
+                question: 'What is perimeter?',
+                answer: `
+                    <h3>Definition</h3>
+                    <p>Perimeter is the <strong>total distance around</strong> the outside of a shape.</p>
+                    <div class="formula">Perimeter = sum of all sides</div>
+                    <div class="tip"><strong>Think:</strong> Walking around the edge of a field - how far would you walk?</div>
+                `
+            },
+            {
+                category: 'perimeter',
+                question: 'What is the perimeter formula for a rectangle?',
+                answer: `
+                    <h3>Rectangle Perimeter</h3>
+                    <div class="formula">P = 2 × (length + width)<br>or<br>P = 2l + 2w</div>
+                    <div class="example">
+                        <strong>Example:</strong> Rectangle with l = 8 cm, w = 5 cm<br>
+                        P = 2 × (8 + 5) = 2 × 13 = 26 cm
+                    </div>
+                `
+            },
+            {
+                category: 'perimeter',
+                question: 'What is the perimeter formula for a square?',
+                answer: `
+                    <h3>Square Perimeter</h3>
+                    <div class="formula">P = 4 × side<br>or<br>P = 4s</div>
+                    <div class="example">
+                        <strong>Example:</strong> Square with side = 7 cm<br>
+                        P = 4 × 7 = 28 cm
+                    </div>
+                    <div class="tip"><strong>Remember:</strong> All 4 sides are equal in a square!</div>
+                `
+            },
+            {
+                category: 'perimeter',
+                question: 'How do you find a missing side when given the perimeter?',
+                answer: `
+                    <h3>Finding Missing Sides</h3>
+                    <div class="example">
+                        <strong>Example:</strong> Rectangle has P = 30 cm, length = 9 cm. Find width.<br><br>
+                        P = 2l + 2w<br>
+                        30 = 2(9) + 2w<br>
+                        30 = 18 + 2w<br>
+                        12 = 2w<br>
+                        w = 6 cm
+                    </div>
+                `
+            },
+
+            // AREA
+            {
+                category: 'area',
+                question: 'What is area?',
+                answer: `
+                    <h3>Definition</h3>
+                    <p>Area is the amount of <strong>space inside</strong> a 2D shape.</p>
+                    <div class="formula">Area is measured in square units (cm², m², km²)</div>
+                    <div class="tip"><strong>Think:</strong> How many 1×1 squares fit inside the shape?</div>
+                `
+            },
+            {
+                category: 'area',
+                question: 'What is the area formula for a rectangle?',
+                answer: `
+                    <h3>Rectangle Area</h3>
+                    <div class="formula">A = length × width<br>or<br>A = l × w</div>
+                    <div class="example">
+                        <strong>Example:</strong> Rectangle with l = 8 cm, w = 5 cm<br>
+                        A = 8 × 5 = 40 cm²
+                    </div>
+                `
+            },
+            {
+                category: 'area',
+                question: 'What is the area formula for a square?',
+                answer: `
+                    <h3>Square Area</h3>
+                    <div class="formula">A = side × side<br>or<br>A = s²</div>
+                    <div class="example">
+                        <strong>Example:</strong> Square with side = 6 cm<br>
+                        A = 6² = 36 cm²
+                    </div>
+                `
+            },
+            {
+                category: 'area',
+                question: 'How do you find the area of a compound shape?',
+                answer: `
+                    <h3>Compound Shapes</h3>
+                    <p><strong>Method 1:</strong> Split into rectangles, add areas</p>
+                    <p><strong>Method 2:</strong> Find large rectangle, subtract missing piece</p>
+                    <div class="example">
+                        <strong>L-shape:</strong> Big rectangle (10×6) minus corner (4×3)<br>
+                        = 60 - 12 = 48 cm²
+                    </div>
+                    <div class="tip"><strong>Tip:</strong> Draw lines to split the shape, label all measurements!</div>
+                `
+            },
+            {
+                category: 'area',
+                question: 'Common mistake: Confusing perimeter and area',
+                answer: `
+                    <h3>Don't Mix Them Up!</h3>
+                    <div class="warning">
+                        <strong>Perimeter:</strong> Distance AROUND (add sides) → units (cm, m)<br>
+                        <strong>Area:</strong> Space INSIDE (multiply) → square units (cm², m²)
+                    </div>
+                    <div class="example">
+                        Rectangle 5 cm × 3 cm:<br>
+                        • Perimeter = 2(5+3) = 16 cm<br>
+                        • Area = 5 × 3 = 15 cm²
+                    </div>
+                `
+            },
+
+            // SEQUENCES
+            {
+                category: 'sequences',
+                question: 'What is an arithmetic sequence?',
+                answer: `
+                    <h3>Arithmetic Sequence</h3>
+                    <p>A sequence where you <strong>add or subtract</strong> the same number each time.</p>
+                    <div class="formula">Each term = previous term + common difference (d)</div>
+                    <div class="example">
+                        <strong>Examples:</strong><br>
+                        • 3, 7, 11, 15, 19, ... (add 4)<br>
+                        • 20, 17, 14, 11, ... (subtract 3)
+                    </div>
+                `
+            },
+            {
+                category: 'sequences',
+                question: 'What is a geometric sequence?',
+                answer: `
+                    <h3>Geometric Sequence</h3>
+                    <p>A sequence where you <strong>multiply or divide</strong> by the same number each time.</p>
+                    <div class="formula">Each term = previous term × common ratio (r)</div>
+                    <div class="example">
+                        <strong>Examples:</strong><br>
+                        • 2, 6, 18, 54, ... (multiply by 3)<br>
+                        • 1000, 100, 10, 1, ... (divide by 10)
+                    </div>
+                `
+            },
+            {
+                category: 'sequences',
+                question: 'How do you identify arithmetic vs geometric?',
+                answer: `
+                    <h3>Quick Test</h3>
+                    <div class="formula">
+                        Check differences: If constant → Arithmetic<br>
+                        Check ratios: If constant → Geometric
+                    </div>
+                    <div class="example">
+                        <strong>5, 10, 20, 40:</strong><br>
+                        Differences: 5, 10, 20 (not constant)<br>
+                        Ratios: 2, 2, 2 (constant!) → Geometric
+                    </div>
+                `
+            },
+            {
+                category: 'sequences',
+                question: 'How do you find the nth term of an arithmetic sequence?',
+                answer: `
+                    <h3>The nth Term Formula</h3>
+                    <div class="formula">nth term = dn + (a - d)<br>or<br>nth term = a + (n-1)d</div>
+                    <p>Where: a = first term, d = common difference</p>
+                    <div class="example">
+                        <strong>Sequence:</strong> 5, 8, 11, 14, ...<br>
+                        a = 5, d = 3<br>
+                        nth term = 3n + (5-3) = 3n + 2
+                    </div>
+                `
+            },
+            {
+                category: 'sequences',
+                question: 'Step-by-step: Finding the nth term',
+                answer: `
+                    <h3>Method</h3>
+                    <ol>
+                        <li>Find the common difference (d)</li>
+                        <li>Write dn (that's the multiplier of n)</li>
+                        <li>Compare 1st term with d×1</li>
+                        <li>Add/subtract to get the adjustment</li>
+                    </ol>
+                    <div class="example">
+                        <strong>Sequence:</strong> 7, 12, 17, 22, ...<br>
+                        d = 5, so start with 5n<br>
+                        When n=1: 5×1 = 5, but 1st term is 7<br>
+                        Need to add 2 → <strong>5n + 2</strong>
+                    </div>
+                `
+            },
+            {
+                category: 'sequences',
+                question: 'How do you use the nth term to find a specific term?',
+                answer: `
+                    <h3>Using the nth Term</h3>
+                    <div class="formula">Substitute n with the term number you want</div>
+                    <div class="example">
+                        <strong>nth term = 4n - 3</strong><br><br>
+                        10th term: 4(10) - 3 = 40 - 3 = 37<br>
+                        50th term: 4(50) - 3 = 200 - 3 = 197<br>
+                        100th term: 4(100) - 3 = 400 - 3 = 397
+                    </div>
+                `
+            },
+
+            // COORDINATES
+            {
+                category: 'coordinates',
+                question: 'What are the four quadrants?',
+                answer: `
+                    <h3>Coordinate Quadrants</h3>
+                    <div class="formula">
+                        Quadrant 1: (+, +) top right<br>
+                        Quadrant 2: (-, +) top left<br>
+                        Quadrant 3: (-, -) bottom left<br>
+                        Quadrant 4: (+, -) bottom right
+                    </div>
+                    <div class="tip"><strong>Remember:</strong> Start top-right, go anti-clockwise!</div>
+                `
+            },
+            {
+                category: 'coordinates',
+                question: 'Which coordinate comes first - x or y?',
+                answer: `
+                    <h3>Coordinate Order</h3>
+                    <div class="formula">(x, y)<br>x comes first, then y</div>
+                    <div class="tip">
+                        <strong>Remember:</strong><br>
+                        • x = horizontal (left/right) → "x is a cross, across"<br>
+                        • y = vertical (up/down) → "y to the sky"<br>
+                        • Alphabet order: x before y
+                    </div>
+                `
+            },
+            {
+                category: 'coordinates',
+                question: 'What points lie on the x-axis and y-axis?',
+                answer: `
+                    <h3>Points on the Axes</h3>
+                    <div class="formula">
+                        On x-axis: y = 0 → (x, 0)<br>
+                        On y-axis: x = 0 → (0, y)<br>
+                        Origin: (0, 0)
+                    </div>
+                    <div class="example">
+                        • (5, 0) is on the x-axis<br>
+                        • (0, -3) is on the y-axis<br>
+                        • (0, 0) is at the origin
+                    </div>
+                `
+            },
+            {
+                category: 'coordinates',
+                question: 'How do you find the midpoint of two points?',
+                answer: `
+                    <h3>Midpoint Formula</h3>
+                    <div class="formula">
+                        Midpoint = ((x₁ + x₂)/2, (y₁ + y₂)/2)
+                    </div>
+                    <p>Add the x's and divide by 2. Add the y's and divide by 2.</p>
+                    <div class="example">
+                        <strong>Points:</strong> (2, 4) and (6, 8)<br>
+                        x: (2 + 6) ÷ 2 = 4<br>
+                        y: (4 + 8) ÷ 2 = 6<br>
+                        <strong>Midpoint: (4, 6)</strong>
+                    </div>
+                `
+            },
+            {
+                category: 'coordinates',
+                question: 'Midpoint with negative numbers',
+                answer: `
+                    <h3>Watch the Signs!</h3>
+                    <div class="example">
+                        <strong>Points:</strong> (-4, 2) and (2, -6)<br><br>
+                        x: (-4 + 2) ÷ 2 = -2 ÷ 2 = -1<br>
+                        y: (2 + -6) ÷ 2 = -4 ÷ 2 = -2<br><br>
+                        <strong>Midpoint: (-1, -2)</strong>
+                    </div>
+                    <div class="tip"><strong>Tip:</strong> Be careful with negative numbers - use brackets!</div>
+                `
+            },
+
+            // PROBABILITY
+            {
+                category: 'probability',
+                question: 'What is probability?',
+                answer: `
+                    <h3>Definition</h3>
+                    <p>Probability measures <strong>how likely</strong> an event is to happen.</p>
+                    <div class="formula">
+                        P(event) = Number of favorable outcomes / Total number of outcomes
+                    </div>
+                    <div class="example">
+                        Probability of rolling a 3 on a dice:<br>
+                        P(3) = 1/6 (one 3 out of six numbers)
+                    </div>
+                `
+            },
+            {
+                category: 'probability',
+                question: 'What is the probability scale?',
+                answer: `
+                    <h3>Probability Scale: 0 to 1</h3>
+                    <div class="formula">
+                        0 = Impossible (will never happen)<br>
+                        1 = Certain (will definitely happen)
+                    </div>
+                    <div class="example">
+                        • P(rolling 7 on normal dice) = 0<br>
+                        • P(sun rising tomorrow) = 1<br>
+                        • P(heads on coin flip) = 0.5 or 1/2
+                    </div>
+                `
+            },
+            {
+                category: 'probability',
+                question: 'How do you find P(not A)?',
+                answer: `
+                    <h3>Complementary Events</h3>
+                    <div class="formula">P(not A) = 1 - P(A)</div>
+                    <p>The probability something DOESN'T happen = 1 minus the probability it DOES happen.</p>
+                    <div class="example">
+                        If P(rain) = 0.3<br>
+                        Then P(no rain) = 1 - 0.3 = 0.7
+                    </div>
+                    <div class="tip"><strong>Remember:</strong> Probabilities of all outcomes add up to 1!</div>
+                `
+            },
+            {
+                category: 'probability',
+                question: 'Common mistake: Writing probability greater than 1',
+                answer: `
+                    <h3>Probability Rules</h3>
+                    <div class="warning">
+                        <strong>Probability is ALWAYS between 0 and 1!</strong><br>
+                        If you get P > 1 or P < 0, you made an error.
+                    </div>
+                    <div class="example">
+                        <strong>Wrong:</strong> P = 7/5 = 1.4 ❌<br>
+                        <strong>Check:</strong> Did you flip the fraction?<br>
+                        Should it be 5/7 ≈ 0.71? ✓
+                    </div>
+                `
+            },
+            {
+                category: 'probability',
+                question: 'How do you find probability with dice?',
+                answer: `
+                    <h3>Dice Probability</h3>
+                    <p>A fair 6-sided dice has outcomes: 1, 2, 3, 4, 5, 6</p>
+                    <div class="example">
+                        <strong>Common probabilities:</strong><br>
+                        • P(specific number) = 1/6<br>
+                        • P(even) = 3/6 = 1/2<br>
+                        • P(odd) = 3/6 = 1/2<br>
+                        • P(greater than 4) = 2/6 = 1/3<br>
+                        • P(at least 2) = 5/6
+                    </div>
+                `
+            },
+            {
+                category: 'probability',
+                question: 'Probability with items in a bag',
+                answer: `
+                    <h3>Bag Problems</h3>
+                    <div class="example">
+                        <strong>Bag:</strong> 4 red, 5 blue, 3 green marbles<br>
+                        Total = 4 + 5 + 3 = 12<br><br>
+                        P(blue) = 5/12<br>
+                        P(red) = 4/12 = 1/3<br>
+                        P(not green) = (4+5)/12 = 9/12 = 3/4<br>
+                        P(yellow) = 0/12 = 0 (none in bag!)
+                    </div>
+                `
+            },
+            {
+                category: 'probability',
+                question: 'How do probabilities in a table add up?',
+                answer: `
+                    <h3>Probability Tables</h3>
+                    <div class="formula">All probabilities must add up to 1</div>
+                    <div class="example">
+                        <strong>Finding missing probability:</strong><br>
+                        A: 0.2, B: 0.35, C: 0.15, D: ?<br><br>
+                        0.2 + 0.35 + 0.15 + D = 1<br>
+                        0.7 + D = 1<br>
+                        D = 0.3
+                    </div>
+                `
+            },
+            {
+                category: 'probability',
+                question: 'What does "P(A or B)" mean?',
+                answer: `
+                    <h3>Combined Events (OR)</h3>
+                    <div class="formula">P(A or B) = P(A) + P(B)<br>(if A and B cannot happen together)</div>
+                    <div class="example">
+                        Dice roll: P(1 or 6)<br>
+                        = P(1) + P(6)<br>
+                        = 1/6 + 1/6<br>
+                        = 2/6 = 1/3
+                    </div>
+                    <div class="tip"><strong>"Or" means ADD</strong> the individual probabilities</div>
+                `
+            }
+        ];
+
+        let currentFilter = 'all';
+        let filteredCards = [...allFlashcards];
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        function filterCards(category) {
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            currentFilter = category;
+
+            if (category === 'all') {
+                filteredCards = [...allFlashcards];
+            } else {
+                filteredCards = allFlashcards.filter(card => card.category === category);
+            }
+
+            currentIndex = 0;
+            if (isFlipped) flipCard();
+            updateCard();
+        }
+
+        function updateCard() {
+            if (filteredCards.length === 0) {
+                document.getElementById('question').textContent = 'No cards in this category';
+                document.getElementById('answer').innerHTML = '';
+                document.getElementById('category-front').textContent = '';
+                return;
+            }
+
+            const card = filteredCards[currentIndex];
+            document.getElementById('question').textContent = card.question;
+            document.getElementById('answer').innerHTML = card.answer;
+
+            // Format category name
+            const categoryNames = {
+                'measures': 'Metric Measures',
+                'perimeter': 'Perimeter',
+                'area': 'Area',
+                'sequences': 'Sequences',
+                'coordinates': 'Coordinates',
+                'probability': 'Probability'
+            };
+            document.getElementById('category-front').textContent = categoryNames[card.category] || card.category;
+
+            // Update counters
+            document.getElementById('current').textContent = currentIndex + 1;
+            document.getElementById('total').textContent = filteredCards.length;
+            document.getElementById('counter-current').textContent = currentIndex + 1;
+            document.getElementById('counter-total').textContent = filteredCards.length;
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            if (isFlipped) flipCard();
+            currentIndex = (currentIndex + 1) % filteredCards.length;
+            updateCard();
+        }
+
+        function prevCard() {
+            if (isFlipped) flipCard();
+            currentIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length;
+            updateCard();
+        }
+
+        function shuffleCards() {
+            if (isFlipped) flipCard();
+            for (let i = filteredCards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+            }
+            currentIndex = 0;
+            updateCard();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === ' ') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+
+        // Initialize
+        updateCard();
+    </script>
+</body>
+</html>
