@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 1 Test 3 - Extra Exercises</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #e0e7ff 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 2rem 3rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #1e3a5f;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6366f1;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .instructions {
+            background: #fef3c7;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .instructions h3 {
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+
+        .instructions p, .instructions li {
+            color: #78350f;
+            line-height: 1.6;
+        }
+
+        .instructions ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .topic-section {
+            margin-bottom: 2rem;
+            border: 2px solid #e0e7ff;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .topic-header {
+            background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .topic-content {
+            padding: 1.5rem;
+        }
+
+        .question {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            border-left: 4px solid #6366f1;
+        }
+
+        .question:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-number {
+            background: #4f46e5;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1rem;
+            color: #1f2937;
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .question-text code {
+            background: #e0e7ff;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            border-color: #6366f1;
+            background-color: #f5f3ff;
+        }
+
+        .option.selected {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+        }
+
+        .option.correct {
+            border-color: #22c55e;
+            background-color: #f0fdf4;
+        }
+
+        .option.incorrect {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 0.75rem;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .option label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .input-answer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .input-answer input {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            width: 150px;
+            transition: border-color 0.2s;
+        }
+
+        .input-answer input:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        .input-answer input.correct {
+            border-color: #22c55e;
+            background-color: #f0fdf4;
+        }
+
+        .input-answer input.incorrect {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .input-answer span {
+            color: #6b7280;
+        }
+
+        .feedback {
+            margin-top: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .submit-section {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .results {
+            display: none;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .results h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .score {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .score-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .score-item {
+            background: rgba(255,255,255,0.2);
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            min-width: 120px;
+        }
+
+        .score-item-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .score-item-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 6px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        /* Shape diagram styles */
+        .shape-diagram {
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .shape-diagram svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Coordinate Grid Styles */
+        .coord-grid-container {
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .coord-grid {
+            background: white;
+            border: 2px solid #c7d2fe;
+            border-radius: 0.5rem;
+            padding: 10px;
+        }
+
+        .coord-grid svg {
+            display: block;
+        }
+
+        .grid-line {
+            stroke: #e5e7eb;
+            stroke-width: 1;
+        }
+
+        .axis-line {
+            stroke: #1f2937;
+            stroke-width: 2;
+        }
+
+        .axis-label {
+            font-size: 12px;
+            fill: #6b7280;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .point {
+            fill: #4f46e5;
+            stroke: white;
+            stroke-width: 2;
+        }
+
+        .point-label {
+            font-size: 14px;
+            font-weight: bold;
+            fill: #1f2937;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .score-breakdown {
+                gap: 1rem;
+            }
+
+            .coord-grid-container {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Year 1 Test 3 - Extra Exercises</h1>
+        <p class="subtitle">Measures, Sequences, Coordinates & Probability</p>
+
+        <div class="instructions">
+            <h3>Instructions:</h3>
+            <ul>
+                <li>Answer all questions below</li>
+                <li>Use paper for working out calculations if needed</li>
+                <li>Click "Submit Test" when you're finished to see your results</li>
+                <li>You can retry the test as many times as you like</li>
+            </ul>
+        </div>
+
+        <form id="test-form">
+            <!-- SECTION 1: METRIC MEASURES -->
+            <div class="topic-section">
+                <div class="topic-header">Section A: Metric Measures</div>
+                <div class="topic-content" id="section-measures"></div>
+            </div>
+
+            <!-- SECTION 2: PERIMETER & AREA -->
+            <div class="topic-section">
+                <div class="topic-header">Section B: Perimeter & Area</div>
+                <div class="topic-content" id="section-area"></div>
+            </div>
+
+            <!-- SECTION 3: SEQUENCES -->
+            <div class="topic-section">
+                <div class="topic-header">Section C: Sequences</div>
+                <div class="topic-content" id="section-sequences"></div>
+            </div>
+
+            <!-- SECTION 4: COORDINATES -->
+            <div class="topic-section">
+                <div class="topic-header">Section D: Coordinates & Midpoints</div>
+                <div class="topic-content" id="section-coordinates"></div>
+            </div>
+
+            <!-- SECTION 5: PROBABILITY -->
+            <div class="topic-section">
+                <div class="topic-header">Section E: Probability</div>
+                <div class="topic-content" id="section-probability"></div>
+            </div>
+        </form>
+
+        <div class="submit-section">
+            <button type="button" class="btn btn-primary" onclick="submitTest()">Submit Test</button>
+            <button type="button" class="btn btn-secondary" onclick="resetTest()">Reset</button>
+        </div>
+
+        <div class="results" id="results">
+            <h2>Test Complete!</h2>
+            <div class="score" id="score-display"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <p id="feedback-message"></p>
+            <div class="score-breakdown" id="score-breakdown"></div>
+            <button class="btn btn-secondary" onclick="resetTest()" style="margin-top: 1.5rem;">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        // SVG coordinate grid generator
+        function createCoordGrid(points, gridSize = 6, cellSize = 35) {
+            const width = (gridSize * 2 + 1) * cellSize;
+            const height = (gridSize * 2 + 1) * cellSize;
+            const centerX = (gridSize + 0.5) * cellSize;
+            const centerY = (gridSize + 0.5) * cellSize;
+
+            let svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
+
+            // Grid lines
+            for (let i = -gridSize; i <= gridSize; i++) {
+                const x = centerX + i * cellSize;
+                const y = centerY - i * cellSize;
+                // Vertical lines
+                svg += `<line x1="${x}" y1="0" x2="${x}" y2="${height}" class="grid-line"/>`;
+                // Horizontal lines
+                svg += `<line x1="0" y1="${y}" x2="${width}" y2="${y}" class="grid-line"/>`;
+            }
+
+            // Axes
+            svg += `<line x1="${centerX}" y1="0" x2="${centerX}" y2="${height}" class="axis-line"/>`;
+            svg += `<line x1="0" y1="${centerY}" x2="${width}" y2="${centerY}" class="axis-line"/>`;
+
+            // Axis labels
+            for (let i = -gridSize; i <= gridSize; i++) {
+                if (i !== 0) {
+                    // X-axis labels
+                    const labelX = centerX + i * cellSize;
+                    svg += `<text x="${labelX}" y="${centerY + 18}" class="axis-label" text-anchor="middle">${i}</text>`;
+                    // Y-axis labels
+                    const labelY = centerY - i * cellSize;
+                    svg += `<text x="${centerX - 12}" y="${labelY + 4}" class="axis-label" text-anchor="end">${i}</text>`;
+                }
+            }
+
+            // Axis arrows and labels
+            svg += `<text x="${width - 15}" y="${centerY - 8}" class="axis-label" font-weight="bold">x</text>`;
+            svg += `<text x="${centerX + 10}" y="15" class="axis-label" font-weight="bold">y</text>`;
+
+            // Points
+            points.forEach(point => {
+                const px = centerX + point.x * cellSize;
+                const py = centerY - point.y * cellSize;
+                svg += `<circle cx="${px}" cy="${py}" r="8" class="point"/>`;
+                svg += `<text x="${px + 12}" y="${py - 10}" class="point-label">${point.label}</text>`;
+            });
+
+            svg += '</svg>';
+            return svg;
+        }
+
+        // L-shape diagram generator
+        function createLShapeDiagram() {
+            return `
+            <svg width="280" height="200" viewBox="0 0 280 200">
+                <!-- Main shape -->
+                <rect x="20" y="20" width="40" height="80" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+                <rect x="60" y="60" width="40" height="40" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+                <rect x="100" y="20" width="40" height="80" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+                <rect x="100" y="100" width="40" height="80" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+
+                <!-- Merge the shape properly - redraw as L-shape -->
+                <path d="M20,20 L60,20 L60,60 L100,60 L100,20 L140,20 L140,180 L100,180 L100,100 L60,100 L60,60 L20,60 Z"
+                      fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+
+                <!-- Dimension labels -->
+                <text x="40" y="15" font-size="12" text-anchor="middle" fill="#374151">4 cm</text>
+                <text x="120" y="15" font-size="12" text-anchor="middle" fill="#374151">4 cm</text>
+                <text x="10" y="45" font-size="12" text-anchor="middle" fill="#374151" transform="rotate(-90, 10, 45)">4 cm</text>
+                <text x="80" y="55" font-size="12" text-anchor="middle" fill="#374151">4 cm</text>
+                <text x="155" y="100" font-size="12" text-anchor="start" fill="#374151">8 cm</text>
+                <text x="80" y="195" font-size="12" text-anchor="middle" fill="#374151">12 cm</text>
+
+                <!-- Dimension lines -->
+                <line x1="20" y1="185" x2="140" y2="185" stroke="#6b7280" stroke-width="1"/>
+                <line x1="20" y1="182" x2="20" y2="188" stroke="#6b7280" stroke-width="1"/>
+                <line x1="140" y1="182" x2="140" y2="188" stroke="#6b7280" stroke-width="1"/>
+
+                <line x1="150" y1="20" x2="150" y2="180" stroke="#6b7280" stroke-width="1"/>
+                <line x1="147" y1="20" x2="153" y2="20" stroke="#6b7280" stroke-width="1"/>
+                <line x1="147" y1="180" x2="153" y2="180" stroke="#6b7280" stroke-width="1"/>
+            </svg>`;
+        }
+
+        // Question data organized by section
+        const questions = {
+            measures: [
+                { id: 'm1', question: '2 km = _____ m', answer: '2000', unit: 'm', type: 'input' },
+                { id: 'm2', question: '450 mm = _____ cm', answer: '45', unit: 'cm', type: 'input' },
+                { id: 'm3', question: '8 kg = _____ g', answer: '8000', unit: 'g', type: 'input' },
+                { id: 'm4', question: '7200 g = _____ kg', answer: '7.2', unit: 'kg', type: 'input' },
+                { id: 'm5', question: '0.95 L = _____ ml', answer: '950', unit: 'ml', type: 'input' }
+            ],
+            area: [
+                {
+                    id: 'a1',
+                    question: 'Look at the L-shaped figure below. Calculate the perimeter.',
+                    hasShape: true,
+                    answer: '48',
+                    unit: 'cm',
+                    type: 'input'
+                },
+                {
+                    id: 'a2',
+                    question: 'Using the same L-shaped figure, calculate the area.',
+                    answer: '80',
+                    unit: 'cm²',
+                    type: 'input'
+                }
+            ],
+            sequences: [
+                {
+                    id: 's1',
+                    question: 'A sequence has general term <code>10n - 2</code>. What is the 1st term?',
+                    answer: '8',
+                    type: 'input'
+                },
+                {
+                    id: 's2',
+                    question: 'Using the general term <code>10n - 2</code>, what is the 2nd term?',
+                    answer: '18',
+                    type: 'input'
+                },
+                {
+                    id: 's3',
+                    question: 'Using the general term <code>10n - 2</code>, what is the 3rd term?',
+                    answer: '28',
+                    type: 'input'
+                },
+                {
+                    id: 's4',
+                    question: 'Using the general term <code>10n - 2</code>, what is the 5th term?',
+                    answer: '48',
+                    type: 'input'
+                },
+                {
+                    id: 's5',
+                    question: 'You are given the sequence: 5, 11, 17, 23, 29, ... What is the first term?',
+                    answer: '5',
+                    type: 'input'
+                },
+                {
+                    id: 's6',
+                    question: 'For the sequence 5, 11, 17, 23, 29, ... what is the common difference?',
+                    answer: '6',
+                    type: 'input'
+                },
+                {
+                    id: 's7',
+                    question: 'For the sequence 5, 11, 17, 23, 29, ... what is the general term (nth term)?',
+                    options: ['5n + 6', '6n + 5', '6n - 1', 'n + 6'],
+                    answer: '6n - 1',
+                    type: 'mc'
+                },
+                {
+                    id: 's8',
+                    question: 'For the sequence 5, 11, 17, 23, 29, ... what is the 50th term?',
+                    answer: '299',
+                    type: 'input'
+                }
+            ],
+            coordinates: [
+                {
+                    id: 'c1',
+                    question: 'Look at the coordinate grid below. What are the coordinates of point A?',
+                    hasGrid: true,
+                    gridPoints: [
+                        { x: 1, y: 1, label: 'A' },
+                        { x: 2, y: 5, label: 'B' },
+                        { x: -4, y: 1, label: 'C' },
+                        { x: 5, y: -2, label: 'D' },
+                        { x: -3, y: 4, label: 'E' },
+                        { x: 0, y: 5, label: 'F' }
+                    ],
+                    options: ['(1, 1)', '(1, -1)', '(-1, 1)', '(-1, -1)'],
+                    answer: '(1, 1)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c2',
+                    question: 'Using the grid above, what are the coordinates of point B?',
+                    options: ['(2, 5)', '(5, 2)', '(-2, 5)', '(2, -5)'],
+                    answer: '(2, 5)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c3',
+                    question: 'Using the grid above, what are the coordinates of point C?',
+                    options: ['(-4, 1)', '(4, 1)', '(-4, -1)', '(1, -4)'],
+                    answer: '(-4, 1)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c4',
+                    question: 'Using the grid above, what are the coordinates of point D?',
+                    options: ['(5, -2)', '(-5, 2)', '(5, 2)', '(-2, 5)'],
+                    answer: '(5, -2)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c5',
+                    question: 'Using the grid above, what are the coordinates of point E?',
+                    options: ['(-3, 4)', '(3, 4)', '(-3, -4)', '(4, -3)'],
+                    answer: '(-3, 4)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c6',
+                    question: 'Using the grid above, what are the coordinates of point F?',
+                    options: ['(0, 5)', '(5, 0)', '(0, -5)', '(-5, 0)'],
+                    answer: '(0, 5)',
+                    type: 'mc'
+                },
+                {
+                    id: 'c7',
+                    question: 'What is the midpoint of the line segment joining (1, 7) and (7, 3)?',
+                    options: ['(4, 5)', '(3, 5)', '(4, 10)', '(8, 10)'],
+                    answer: '(4, 5)',
+                    type: 'mc'
+                }
+            ],
+            probability: [
+                {
+                    id: 'p1',
+                    question: 'An ordinary 6-sided dice is rolled once. How many possible outcomes are there?',
+                    options: ['4', '5', '6', '12'],
+                    answer: '6',
+                    type: 'mc'
+                },
+                {
+                    id: 'p2',
+                    question: 'A 6-sided dice is rolled once. What is P(1)?',
+                    options: ['1/6', '1/3', '1/2', '1'],
+                    answer: '1/6',
+                    type: 'mc'
+                },
+                {
+                    id: 'p3',
+                    question: 'A 6-sided dice is rolled once. What is P(even number)?',
+                    options: ['1/6', '1/3', '1/2', '2/3'],
+                    answer: '1/2',
+                    type: 'mc'
+                },
+                {
+                    id: 'p4',
+                    question: 'Counters A, B, C, D and E are in a bag. The probabilities are: P(B) = 0.3, P(C) = 0.1, P(D) = 0.3, P(E) = 0.1. What is P(A)?',
+                    options: ['0.1', '0.2', '0.3', '0.8'],
+                    answer: '0.2',
+                    type: 'mc'
+                },
+                {
+                    id: 'p5',
+                    question: 'Using the same counters (A, B, C, D, E), what is P(B or C)?',
+                    options: ['0.3', '0.4', '0.1', '0.03'],
+                    answer: '0.4',
+                    type: 'mc'
+                }
+            ]
+        };
+
+        let userAnswers = {};
+        let submitted = false;
+
+        function renderQuestions() {
+            // Render each section
+            renderSection('section-measures', questions.measures);
+            renderSection('section-area', questions.area);
+            renderSection('section-sequences', questions.sequences);
+            renderSection('section-coordinates', questions.coordinates);
+            renderSection('section-probability', questions.probability);
+        }
+
+        function renderSection(containerId, sectionQuestions) {
+            const container = document.getElementById(containerId);
+            let html = '';
+
+            sectionQuestions.forEach((q, index) => {
+                html += `<div class="question" id="question-${q.id}">`;
+                html += `<div class="question-header">`;
+                html += `<div class="question-number">${index + 1}</div>`;
+                html += `<div class="question-text">${q.question}</div>`;
+                html += `</div>`;
+
+                // Add L-shape diagram if this question has one
+                if (q.hasShape) {
+                    html += `<div class="shape-diagram">`;
+                    html += createLShapeDiagram();
+                    html += `</div>`;
+                }
+
+                // Add coordinate grid if this question has one
+                if (q.hasGrid && q.gridPoints) {
+                    html += `<div class="coord-grid-container">`;
+                    html += `<div class="coord-grid">`;
+                    html += createCoordGrid(q.gridPoints);
+                    html += `</div>`;
+                    html += `</div>`;
+                }
+
+                if (q.type === 'input') {
+                    html += `<div class="input-answer">`;
+                    html += `<input type="text" id="input-${q.id}" onchange="saveAnswer('${q.id}', this.value)">`;
+                    if (q.unit) {
+                        html += `<span>${q.unit}</span>`;
+                    }
+                    html += `</div>`;
+                } else if (q.type === 'mc') {
+                    html += `<div class="options">`;
+                    q.options.forEach((option, optIndex) => {
+                        html += `<div class="option" id="option-${q.id}-${optIndex}" onclick="selectOption('${q.id}', '${option.replace(/'/g, "\\'")}', ${optIndex})">`;
+                        html += `<input type="radio" name="${q.id}" id="radio-${q.id}-${optIndex}">`;
+                        html += `<label>${option}</label>`;
+                        html += `</div>`;
+                    });
+                    html += `</div>`;
+                }
+
+                html += `<div class="feedback" id="feedback-${q.id}"></div>`;
+                html += `</div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function saveAnswer(questionId, value) {
+            userAnswers[questionId] = value.trim();
+        }
+
+        function selectOption(questionId, value, optIndex) {
+            if (submitted) return;
+
+            userAnswers[questionId] = value;
+
+            // Update visual selection
+            const allOptions = document.querySelectorAll(`[id^="option-${questionId}-"]`);
+            allOptions.forEach(opt => opt.classList.remove('selected'));
+            document.getElementById(`option-${questionId}-${optIndex}`).classList.add('selected');
+            document.getElementById(`radio-${questionId}-${optIndex}`).checked = true;
+        }
+
+        function getAllQuestions() {
+            return [
+                ...questions.measures,
+                ...questions.area,
+                ...questions.sequences,
+                ...questions.coordinates,
+                ...questions.probability
+            ];
+        }
+
+        function submitTest() {
+            submitted = true;
+            const allQuestions = getAllQuestions();
+            let totalCorrect = 0;
+            const sectionScores = {
+                measures: { correct: 0, total: questions.measures.length },
+                area: { correct: 0, total: questions.area.length },
+                sequences: { correct: 0, total: questions.sequences.length },
+                coordinates: { correct: 0, total: questions.coordinates.length },
+                probability: { correct: 0, total: questions.probability.length }
+            };
+
+            allQuestions.forEach(q => {
+                const userAnswer = userAnswers[q.id] || '';
+                const isCorrect = userAnswer.toLowerCase() === q.answer.toLowerCase();
+
+                const feedbackEl = document.getElementById(`feedback-${q.id}`);
+
+                if (q.type === 'input') {
+                    const inputEl = document.getElementById(`input-${q.id}`);
+                    if (isCorrect) {
+                        inputEl.classList.add('correct');
+                        feedbackEl.textContent = 'Correct!';
+                        feedbackEl.className = 'feedback show correct';
+                    } else {
+                        inputEl.classList.add('incorrect');
+                        feedbackEl.textContent = `Incorrect. The answer is ${q.answer}`;
+                        feedbackEl.className = 'feedback show incorrect';
+                    }
+                } else if (q.type === 'mc') {
+                    q.options.forEach((option, optIndex) => {
+                        const optionEl = document.getElementById(`option-${q.id}-${optIndex}`);
+                        if (option === q.answer) {
+                            optionEl.classList.add('correct');
+                        } else if (option === userAnswer && !isCorrect) {
+                            optionEl.classList.add('incorrect');
+                        }
+                    });
+
+                    if (isCorrect) {
+                        feedbackEl.textContent = 'Correct!';
+                        feedbackEl.className = 'feedback show correct';
+                    } else {
+                        feedbackEl.textContent = `Incorrect. The answer is ${q.answer}`;
+                        feedbackEl.className = 'feedback show incorrect';
+                    }
+                }
+
+                if (isCorrect) {
+                    totalCorrect++;
+                    // Update section scores
+                    if (questions.measures.includes(q)) sectionScores.measures.correct++;
+                    else if (questions.area.includes(q)) sectionScores.area.correct++;
+                    else if (questions.sequences.includes(q)) sectionScores.sequences.correct++;
+                    else if (questions.coordinates.includes(q)) sectionScores.coordinates.correct++;
+                    else if (questions.probability.includes(q)) sectionScores.probability.correct++;
+                }
+            });
+
+            // Display results
+            const totalQuestions = allQuestions.length;
+            const percentage = Math.round((totalCorrect / totalQuestions) * 100);
+
+            document.getElementById('score-display').textContent = `${totalCorrect} / ${totalQuestions}`;
+            document.getElementById('progress-fill').style.width = `${percentage}%`;
+
+            let message = '';
+            if (percentage >= 90) message = 'Excellent! Outstanding performance!';
+            else if (percentage >= 75) message = 'Great job! Well done!';
+            else if (percentage >= 50) message = 'Good effort! Keep practicing!';
+            else message = 'Keep working hard! Review the topics and try again.';
+
+            document.getElementById('feedback-message').textContent = message;
+
+            // Section breakdown
+            const breakdownHtml = `
+                <div class="score-item">
+                    <div class="score-item-value">${sectionScores.measures.correct}/${sectionScores.measures.total}</div>
+                    <div class="score-item-label">Measures</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-item-value">${sectionScores.area.correct}/${sectionScores.area.total}</div>
+                    <div class="score-item-label">Area & Perimeter</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-item-value">${sectionScores.sequences.correct}/${sectionScores.sequences.total}</div>
+                    <div class="score-item-label">Sequences</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-item-value">${sectionScores.coordinates.correct}/${sectionScores.coordinates.total}</div>
+                    <div class="score-item-label">Coordinates</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-item-value">${sectionScores.probability.correct}/${sectionScores.probability.total}</div>
+                    <div class="score-item-label">Probability</div>
+                </div>
+            `;
+            document.getElementById('score-breakdown').innerHTML = breakdownHtml;
+
+            document.getElementById('results').classList.add('show');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function resetTest() {
+            submitted = false;
+            userAnswers = {};
+
+            // Reset all inputs and options
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                input.value = '';
+                input.classList.remove('correct', 'incorrect');
+            });
+
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.checked = false;
+            });
+
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+            });
+
+            document.querySelectorAll('.feedback').forEach(feedback => {
+                feedback.classList.remove('show', 'correct', 'incorrect');
+            });
+
+            document.getElementById('results').classList.remove('show');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize
+        renderQuestions();
+    </script>
+</body>
+</html>
